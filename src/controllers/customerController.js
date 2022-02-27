@@ -23,7 +23,6 @@ export async function getCustomers(req,res){
 
 export async function postCustomers(req,res){
     const {name,phone,cpf,birthday}=res.locals
-    console.log(res.locals)
     try{
         const findCPF = await connection.query(`SELECT * FROM customers WHERE cpf='${cpf}'`)
         if(findCPF.rows.length>0){
