@@ -22,9 +22,18 @@ export async function getCustomers(req,res){
 }
 
 export async function postCustomers(req,res){
-    
+    const {name,phone,cpf,birthday}=req.body
     try{
-
+        const findCPF = await connection.query(`SELECT * FROM customers WHERE cpf='${cpf}'`)
+        if(findCPF.rows.length>0){
+           return res.status(409).send({message:"CPF já cadastrado"})
+        }
+        await connection.query(`
+            INSERT INTO 
+                customers (name,phone,cpf,birthday) 
+                VALUES ($1,$2,$3,$4)`,
+            [name,phone,cpf,birthday])
+        return res.sendStatus(201)
     }
     catch(e){
         console.log(e);
