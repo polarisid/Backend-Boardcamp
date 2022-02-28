@@ -10,7 +10,11 @@ export async function getCustomers(req,res){
                 await connection.query(`SELECT * FROM customers WHERE  id=${id}`)
                 :
                 await connection.query(`SELECT * FROM customers`)
-        query.rows.length>0?
+
+        query.rows.length===1&id&&
+            res.send(query.rows[0]);
+
+        query.rows.length>1?
             res.send(query.rows)
             :
             res.status(404).send({message:"Não encontrado"})
