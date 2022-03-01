@@ -15,7 +15,7 @@ export async function postCategories(req,res){
     const {name} = res.locals;
     try{
         const findCategory = await connection.query(`SELECT * FROM categories WHERE name='${name}'`)
-        if(findCategory.rows.length>0){
+        if(findCategory.rowCount>0){
             return res.status(409).send({message:"Categoria já cadastrada"})
         }
         await connection.query(`

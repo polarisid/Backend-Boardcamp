@@ -29,7 +29,7 @@ export async function postCustomers(req,res){
     const {name,phone,cpf,birthday}=res.locals
     try{
         const findCPF = await connection.query(`SELECT * FROM customers WHERE cpf='${cpf}'`)
-        if(findCPF.rows.length>0){
+        if(findCPF.rowCount>0){
            return res.status(409).send({message:"CPF já cadastrado"})
         }
         await connection.query(`
@@ -51,7 +51,7 @@ export async function putCustomers(req,res){
     const {name,phone,cpf,birthday}=res.locals
 try{
     const findCPF = await connection.query(`SELECT * FROM customers WHERE cpf='${cpf}'`)
-    if(findCPF.rows.length>0&&findCPF.rows[0].id!==id){
+    if(findCPF.rowCount>0&&findCPF.rows[0].id!==id){
        return res.status(409).send({message:"Você não pode alterar para um CPF já cadastrado"})
     }
     await connection.query(`
