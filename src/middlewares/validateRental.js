@@ -3,6 +3,7 @@ import sanitizeData from '../utils/sanitizer.js';
 
 export function validateRental(req,res,next){
     const {customerId,gameId,daysRented} = req.body;
+    
     try{
         const rentalSanitizer = {
             customerId : parseInt(sanitizeData(customerId.toString())),

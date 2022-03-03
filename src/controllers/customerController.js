@@ -2,22 +2,26 @@ import { connection } from "../db.js"
 export async function getCustomers(req,res){
     const filter=req.query.cpf;
     const id  = req.params.id
+
+    
+
     try{
-        const query = filter?
-            await connection.query(`SELECT * FROM customers WHERE cpf LIKE '${filter}%'`)
-            :
-            req.params.id?
-                await connection.query(`SELECT * FROM customers WHERE  id=${id}`)
-                :
-                await connection.query(`SELECT * FROM customers`)
-
-        query.rows.length===1&id&&
-            res.send(query.rows[0]);
-
-        query.rows.length>1?
-            res.send(query.rows)
-            :
-            res.status(404).send({message:"Não encontrado"})
+        const findId = id&&(await connection.query(`SELECT * FROM customers WHERE  id=${id}`));
+        const findCPF = filter&&(await connection.query(`SELECT * FROM customers WHERE cpf LIKE '${filter}%'`));
+        const findAll = await connection.query(`SELECT * FROM customers`)
+        
+       
+        if(findId){
+            if(findId.rowCount==0) return res.status(404).send({message:"ID Não encontrado"})
+            return res.send(findId.rows[0])
+        }
+        if(findCPF){
+            if(findCPF.rowCount==0) return res.status(404).send({message:"CPF Não encontrado"})
+            return res.send(findCPF.rows)
+        }
+        if(filter==undefined&&id==undefined){
+            return res.send(findAll.rows)
+        }
     }
     catch(e){
         console.log(e);
