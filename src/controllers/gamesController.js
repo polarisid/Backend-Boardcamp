@@ -3,7 +3,7 @@ export async function getGames(req,res){
     const filter=req.query.name;
     try{
         if(filter){
-    const query = await connection.query(`SELECT games.*, categories.name as "categoryName" FROM games  JOIN categories ON games."categoryId"=categories.id  WHERE UPPER(games.name) LIKE UPPER('${filter}%')` );
+        const query = await connection.query(`SELECT games.*, categories.name as "categoryName" FROM games  JOIN categories ON games."categoryId"=categories.id  WHERE UPPER(games.name) LIKE UPPER('${filter}%')` );
         return res.send(query.rows)
         }
         const query = await connection.query(`SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id`);
