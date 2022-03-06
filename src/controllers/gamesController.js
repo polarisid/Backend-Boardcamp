@@ -1,11 +1,16 @@
 import { connection } from "../db.js";
 export async function getGames(req,res){
+    const filter=req.query.name;
     try{
+        if(filter){
+    const query = await connection.query(`SELECT games.*, categories.name as "categoryName" FROM games  JOIN categories ON games."categoryId"=categories.id  WHERE UPPER(games.name) LIKE UPPER('${filter}%')` );
+        return res.send(query.rows)
+        }
         const query = await connection.query(`SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id`);
-        res.send(query.rows)
+        return res.send(query.rows)
     }catch(e){
         console.log(e);
-        res.status(501).send({message:"Erro interno"})
+        return res.status(501).send({message:"Erro interno"})
     }
 }
 
