@@ -6,9 +6,10 @@ Back-end para um sistema de gestão de uma locadora de jogos de tabuleiro!
 - [x] CRUD - JOGOS
 - [x] CRUD - CLIENTES
 - [x] CRUD - ALUGUE
+<details>
+  <summary>Categorias  - Cread/Read</summary>
 
-### Categorias 
-- #### GET - /categories
+- #### GET - /categories - Listar categorias
   Lista todas as categorias no seguinte formato
    ```
    [
@@ -22,7 +23,7 @@ Back-end para um sistema de gestão de uma locadora de jogos de tabuleiro!
     }
   ]
    ```
-- #### POST - /categories
+- #### POST - /categories - Inserir categoria
   O body deve ser no seguinte formato
   
   ```
@@ -30,3 +31,41 @@ Back-end para um sistema de gestão de uma locadora de jogos de tabuleiro!
   name: 'Investigação'
   }
   ```
+  - 201 - OK, Created
+  - 501 - Erro interno
+  - Caso ocorra algum erro retornara um Status Code e uma mensagem no formato ```{message:"Erro ocorrido}```
+  - Obs 1: ```name``` não pode estar vazio ⇒ nesse caso, deve retornar status 400
+  - Obs 2: ```name``` não pode ser um nome de categoria já existente ⇒ nesse caso deve retornar status 409
+</details>
+
+<details>
+  <summary>Jogos - Cread/Read</summary>
+  
+  - #### GET - /games - Listar jogos encontrados       
+  
+      Lista os jogos encontrados, seguindo o formato abaixo (incluindo o nome da categoria conforme destacado)
+      ```
+       [
+        {
+          id: 1,
+          name: 'Banco Imobiliário',
+          image: 'http://',
+          stockTotal: 3,
+          categoryId: 1,
+          pricePerDay: 1500,
+          categoryName: 'Estratégia'
+        },
+        {
+          id: 2,
+          name: 'Detetive',
+          image: 'http://',
+          stockTotal: 1,
+          categoryId: 2,
+          pricePerDay: 2500,
+          categoryName: 'Investigação'
+        },
+       ]
+      ```
+    - 
+
+</details>
