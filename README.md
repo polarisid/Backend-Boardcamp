@@ -181,6 +181,8 @@ Back-end para um sistema de gestão de uma locadora de jogos de tabuleiro!
     - Caso seja passado o customerId como parametro via query string ```/rentals?customerId=1```
     È retornado um array somente com os aluguéis deste cliente
     - Case seja passado gameId como parametro via query string ```/rentals?gameId=1``` deve retonar somente os alugueis com este jogo
+    - Caso seja passado ```status``` como parametro via query string ```/rentals?status=open``` filtra os alugueis abertos (open) e encerrados (close). Sendo status=open - são os abertos, e status=close são os alugueis encerrados.
+    - Caso seja passado um parâmetro ```startDate``` na query string da requisição, os aluguéis devem ser filtrados para retornar somente os que foram feitos a partir daquela data. Ex : ```/rentals?startDate=2021-06-10``` deve ser retornado uma array somente com os aluguéis com rentDate maior ou igual a 2021-06-10
     ---
   - #### POST /rentals - Criar aluguel
       O body da requisição deve estar no seguinte formato

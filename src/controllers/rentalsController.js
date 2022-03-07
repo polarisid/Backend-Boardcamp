@@ -37,9 +37,10 @@ export async function postRental(req, res) {
 export async function getRental(req, res) {
     const filterCustomer = req.query.customerId;
     const filterGame = req.query.gameId
+    const statusFilter = req.query.status
+    const dateFilter = req.query.startDate
     try {
-
-        if (!filterCustomer && !filterGame) {
+        if (!filterCustomer && !filterGame && !statusFilter && !dateFilter) {
             const rentals = (await connection.query(`SELECT * FROM rentals`)).rows
             const customers = (await connection.query(`SELECT customers.id ,customers.name FROM customers`)).rows
             const games = (await connection.query(`SELECT games.id, games.name,games."categoryId", categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id`)).rows
@@ -48,15 +49,49 @@ export async function getRental(req, res) {
                 customer: customers.find(customer => customer.id === rental.customerId),
                 game: games.find(game => game.id === rental.gameId),
             }));
-
             return res.send(summaryRental)
         }
+        if(dateFilter){
+            const rentals = (await connection.query(`SELECT * FROM rentals WHERE "rentDate" BETWEEN ($1) and now()`,[dateFilter])).rows
+            const customers = (await connection.query(`SELECT customers.id ,customers.name FROM customers`)).rows
+            const games = (await connection.query(`SELECT games.id, games.name,games."categoryId", categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id`)).rows
+            const summaryRental = rentals.map(rental => ({
+                ...rental,
+                customer: customers.find(customer => customer.id === rental.customerId),
+                game: games.find(game => game.id === rental.gameId),
+            }));
+            return res.send(summaryRental)
+        }
+        if(statusFilter){
+            if(statusFilter=='open'){
+                const rentals = (await connection.query(`SELECT * FROM rentals WHERE "returnDate" IS NULL`)).rows
+                const customers = (await connection.query(`SELECT customers.id ,customers.name FROM customers`)).rows
+                const games = (await connection.query(`SELECT games.id, games.name,games."categoryId", categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id`)).rows
+                const summaryRental = rentals.map(rental => ({
+                    ...rental,
+                    customer: customers.find(customer => customer.id === rental.customerId),
+                    game: games.find(game => game.id === rental.gameId),
+                }));
+                return res.send(summaryRental)
+            }
+            if(statusFilter=='close'){
+                const rentals = (await connection.query(`SELECT * FROM rentals WHERE "returnDate" IS NOT NULL`)).rows
+                const customers = (await connection.query(`SELECT customers.id ,customers.name FROM customers`)).rows
+                const games = (await connection.query(`SELECT games.id, games.name,games."categoryId", categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id`)).rows
+                const summaryRental = rentals.map(rental => ({
+                    ...rental,
+                    customer: customers.find(customer => customer.id === rental.customerId),
+                    game: games.find(game => game.id === rental.gameId),
+                }));
+                return res.send(summaryRental)
+            }
+        }
 
-        const findGame = filterGame && (await connection.query(`SELECT * FROM games WHERE id='${filterGame}'`)).rowCount
-        const findCustomer = filterCustomer && (await connection.query(`SELECT * FROM customers WHERE id='${filterCustomer}'`)).rowCount
-        console.log(findCustomer)
+        const findGame = filterGame && (await connection.query(`SELECT * FROM games WHERE id= ($1)`,[filterGame])).rowCount
+        const findCustomer = filterCustomer && (await connection.query(`SELECT * FROM customers WHERE id= ($1)`,[filterCustomer])).rowCount
+        
         if (findCustomer) {
-            const rentals = (await connection.query(`SELECT * FROM rentals WHERE "customerId"=${filterCustomer}`)).rows
+            const rentals = (await connection.query(`SELECT * FROM rentals WHERE "customerId"= ($1)`,[findCustomer])).rows
             const customers = (await connection.query(`SELECT customers.id ,customers.name FROM customers`)).rows
             const games = (await connection.query(`SELECT games.id, games.name,games."categoryId", categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id`)).rows
             const summaryRental = rentals.map(rental => ({
@@ -77,7 +112,7 @@ export async function getRental(req, res) {
             }));
             return res.send(summaryRental)
         }
-        if (findCustomer == undefined || findGame == undefined) {
+        if (findCustomer == undefined || findGame == undefined ) {
             return res.status(400).send({ message: "Game ID ou Customer ID não existe" })
         }
     } catch (e) {
