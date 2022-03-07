@@ -5,7 +5,7 @@ Back-end para um sistema de gestão de uma locadora de jogos de tabuleiro!
 - [x] CRUD - CATEGORIAS
 - [x] CRUD - JOGOS
 - [x] CRUD - CLIENTES
-- [x] CRUD - ALUGUE
+- [x] CRUD - ALUGUEIS
   <details>
       <summary>Categorias  - Cread/Read</summary>
 
